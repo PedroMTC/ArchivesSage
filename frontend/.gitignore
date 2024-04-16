@@ -1,0 +1,5 @@
+# Ignorar o diretório modules
+modules/
+
+# Ignorar o arquivo db.js
+db.js
