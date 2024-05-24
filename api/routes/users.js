@@ -1,18 +1,18 @@
-import express from "express";
+import express from 'express';
 import { addUser, deleteUser, getUsers, updateUser, registerUser, loginUser } from "../controllers/user.js";
+import sendMessage from "../utils/sendMessage.js";
+import authMiddleware from '../middleware/authMiddleware.js';
 
-const router = express.Router()
 
-router.get("/", getUsers)
+const router = express.Router();
 
-router.post("/", addUser)
-
-router.put("/:id", updateUser)
-
-router.delete("/:id", deleteUser)
-
+router.get("/", getUsers);
+router.post("/", addUser);
+router.put("/:id", authMiddleware, updateUser);
+router.delete("/:id", deleteUser);
 router.post("/register", registerUser);
-
 router.post("/login", loginUser);
 
-export default router
+router.post("/send-message", sendMessage); 
+
+export default router;

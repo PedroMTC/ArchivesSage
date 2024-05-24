@@ -1,5 +1,19 @@
 import { db } from "../db.js";
-import bcrypt from "bcrypt"; // Para hash de senha
+import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+
+dotenv.config();
+
+const generateToken = (userId) => {
+  const payload = {
+    userId: userId,
+  };
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+  return token;
+};
 
 export const loginUser = async (req, res) => {
   const { email, senha } = req.body;
@@ -16,20 +30,17 @@ export const loginUser = async (req, res) => {
     }
 
     if (results.length === 0) {
-      return res.status(401).json({ message: "Email ou senha inválidossssss." });
+      return res.status(401).json({ message: "Email ou senha inválidos." });
     }
 
     const user = results[0];
 
-    const match = senha.localeCompare(user.senha);
+    const match = await bcrypt.compare(senha, user.senhaHash);
 
-    console.log(user+"user")
-    console.log(match+"match")
-    console.log(senha+"senha")
-    console.log(user.senha)
-    if (!match) {
-      res.status(200).json({ message: "Login bem-sucedido.", user });
-
+    if (match) {
+      // Gerar token JWT
+      const token = generateToken(user.id);
+      res.status(200).json({ message: "Login bem-sucedido.", user, token });
     } else {
       res.status(401).json({ message: "Email ou senha inválidos." });
     }
@@ -44,16 +55,24 @@ export const registerUser = (req, res) => {
       return res.status(400).json({ message: "Todos os campos são obrigatórios." });
   }
 
-  const query = "INSERT INTO usuários (nome, email, senha, fone, data_nascimento) VALUES (?, ?, ?, ?, ?)";
-  db.query(query, [nome, email, senha, fone, data_nascimento], (err, result) => {
-      if (err) {
-          console.error("Erro ao inserir usuário:", err);
-          return res.status(500).json({ message: "Erro ao registrar o usuário." });
-      }
+  bcrypt.hash(senha, 10, (err, senhaHash) => {
+    if (err) {
+      console.error("Erro ao hashear senha:", err);
+      return res.status(500).json({ message: "Erro ao registrar o usuário." });
+    }
 
-      res.status(201).json({ message: "Usuário registrado com sucesso." });
+    const query = "INSERT INTO usuários (nome, email, senhaHash, fone, data_nascimento) VALUES (?, ?, ?, ?, ?)";
+    db.query(query, [nome, email, senhaHash, fone, data_nascimento], (err, result) => {
+        if (err) {
+            console.error("Erro ao inserir usuário:", err);
+            return res.status(500).json({ message: "Erro ao registrar o usuário." });
+        }
+
+        res.status(201).json({ message: "Usuário registrado com sucesso." });
+    });
   });
 };
+
 
 export const getUsers = (_, res) => {
   const q = "SELECT * FROM usuários";

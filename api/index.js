@@ -1,29 +1,24 @@
-import express from "express"
-import userRoutes from "./routes/users.js"
-import cors from "cors"
+// index.js
 
-const app = express()
+import express from 'express';
+import userRoutes from './routes/users.js';
+import cors from 'cors';
+import sendMessage from './utils/sendMessage.js';
+import path from 'path';
 
-app.use(express.json())
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
-app.use(cors())
+const app = express();
 
-// const corsOptions = {
-//     // origin: 'http://localhost:3000/',
-//     credentials: false,
-//     optionSuccessStatus: 200
-// }
-// app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cors());
+app.use(express.static('public'));
 
-// app.use(function (req, res, next) {
-//     res.header('Access-Control-Allow-Origin', "http://localhost:3000/");
-//     res.header('Access-Control-Allow-Headers', true);
-//     res.header('Access-Control-Allow-Credentials', true);
-//     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-//     next();
-// });
+app.post('/send-message', sendMessage);
 
+app.use('/', userRoutes);
 
-app.use("/", userRoutes)
+app.listen(8800, () => {
+  console.log('Server listening at http://localhost:8800');
+});
 
-app.listen(8800)

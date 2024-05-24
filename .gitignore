@@ -1,5 +1,5 @@
-# Ignorar o diretório modules
 node_modules/
 
-# Ignorar o arquivo db.js
-db.js
+.env
+
+node_modules/

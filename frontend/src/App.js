@@ -3,14 +3,13 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import HomePage from "./components/HomePage.js";
+import HomePage from "./HomePage.js";
 import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
 import Form from "./components/Form.js";
 import Grid from "./components/Grid";
+import ChatPage from "./ChatPage"; // Importe o novo componente
 import './input.css';
-
-
 
 function App() {
     const [users, setUsers] = useState([]);
@@ -46,6 +45,8 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage getUsers={getUsers} />} />
+                <Route path="/chat" element={<ChatPage />} />
+
             </Routes>
             <ToastContainer autoClose={3000} position={toast.POSITION.BOTTOM_LEFT} />
         </Router>
