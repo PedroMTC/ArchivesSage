@@ -8,7 +8,7 @@ import LoginPage from "./LoginPage";
 import RegisterPage from "./RegisterPage";
 import Form from "./components/Form.js";
 import Grid from "./components/Grid";
-import ChatPage from "./ChatPage"; // Importe o novo componente
+import ChatPage from "./ChatPage";
 import './input.css';
 
 function App() {

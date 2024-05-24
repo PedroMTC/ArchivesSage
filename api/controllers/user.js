@@ -38,7 +38,6 @@ export const loginUser = async (req, res) => {
     const match = await bcrypt.compare(senha, user.senhaHash);
 
     if (match) {
-      // Gerar token JWT
       const token = generateToken(user.id);
       res.status(200).json({ message: "Login bem-sucedido.", user, token });
     } else {

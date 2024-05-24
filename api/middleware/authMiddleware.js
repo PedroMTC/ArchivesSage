@@ -13,7 +13,6 @@ const authMiddleware = (req, res, next) => {
     req.userId = decoded.userId;
     next(); 
   } catch (error) {
-    // Se o token for inválido ou expirado, responder com erro 401
     return res.status(401).json({ message: 'Token inválido ou expirado' });
   }
 };
