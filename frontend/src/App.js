@@ -1,6 +1,8 @@
+// src/App.js
+
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import axios from "axios";
+import axios from "./axiosConfig"; 
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import HomePage from "./HomePage.js";
@@ -9,6 +11,8 @@ import RegisterPage from "./RegisterPage";
 import Form from "./components/Form.js";
 import Grid from "./components/Grid";
 import ChatPage from "./ChatPage";
+import ProtectedRoute from "./ProtectedRoute.js";
+import ProtectedAdminRoute from "./ProtectedAdminRoute";
 import './input.css';
 
 function App() {
@@ -17,7 +21,7 @@ function App() {
 
     const getUsers = async () => {
         try {
-            const res = await axios.get("http://localhost:8800");
+            const res = await axios.get("/");
             setUsers(res.data.sort((a, b) => (a.nome > b.nome ? 1 : -1)));
         } catch (error) {
             toast.error(error);
@@ -26,27 +30,33 @@ function App() {
 
     useEffect(() => {
         getUsers();
-    }, [setUsers]);
+    }, []);
 
     return (
         <Router>
             <Routes>
+                {/* Rota para a página inicial */}
+                <Route path="/" element={<HomePage />} />
+                {/* Rota para a página de login */}
+                <Route path="/login" element={<LoginPage />} />
+                {/* Rota para a página de registro */}
+                <Route path="/register" element={<RegisterPage getUsers={getUsers} />} />
+                {/* Rota protegida para a página de chat */}
+                <Route path="/chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
                 <Route
-                    exact
                     path="/CRUD"
                     element={
-                        <div className="w-full max-w-xl mx-auto mt-8 flex flex-col items-center space-y-4">
-                            <h2 className="text-2xl font-bold">USUÁRIOS</h2>
-                            <Form onEdit={onEdit} setOnEdit={setOnEdit} getUsers={getUsers} />
-                            <Grid setOnEdit={setOnEdit} users={users} setUsers={setUsers} />
-                        </div>
+                        <ProtectedAdminRoute
+                            element={
+                                <div className="w-full max-w-xl mx-auto mt-8 flex flex-col items-center space-y-4">
+                                    <h2 className="text-2xl font-bold">USUÁRIOS</h2>
+                                    <Form onEdit={onEdit} setOnEdit={setOnEdit} getUsers={getUsers} />
+                                    <Grid setOnEdit={setOnEdit} users={users} setUsers={setUsers} />
+                                </div>
+                            }
+                        />
                     }
                 />
-                <Route path="/" element={<HomePage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage getUsers={getUsers} />} />
-                <Route path="/chat" element={<ChatPage />} />
-
             </Routes>
             <ToastContainer autoClose={3000} position={toast.POSITION.BOTTOM_LEFT} />
         </Router>

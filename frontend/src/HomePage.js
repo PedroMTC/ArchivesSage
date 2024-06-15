@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+
 function HomePage() {
   const navigate = useNavigate();
 
@@ -53,14 +54,12 @@ function HomePage() {
               </div>
             </div>
           </section>
-          <section className="w-1/2 p-4 flex justify-center ">
-            <div className="flip-card p-6">
-              <div className="flip-card-inner">
-                <div className="flip-card-front">
-                  <img src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.jpg" alt="Imagem" />
+          <section className="w-1/2 p-4 flex justify-center">
+            <div className="maincontainer bg-logo bg-cover">
+              <div className="thecard">
+                <div className="thefront bg-logo bg-cover">
                 </div>
-                <div className="flip-card-back">
-                <img src="" className="flex-grow relative bg-[url('/img/logo.jpg')] bg-cover flex justify-center items-center" alt="img"/>
+                <div className="theback bg-logo">
                 </div>
               </div>
             </div>
@@ -79,3 +78,4 @@ function HomePage() {
 }
 
 export default HomePage;
+

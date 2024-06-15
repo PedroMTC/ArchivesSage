@@ -6,9 +6,10 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const generateToken = (userId) => {
+const generateToken = (userId, isAdmin) => {
   const payload = {
     userId: userId,
+    isAdmin: isAdmin, 
   };
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
@@ -38,7 +39,7 @@ export const loginUser = async (req, res) => {
     const match = await bcrypt.compare(senha, user.senhaHash);
 
     if (match) {
-      const token = generateToken(user.id);
+      const token = generateToken(user.id, user.isAdmin);
       res.status(200).json({ message: "Login bem-sucedido.", user, token });
     } else {
       res.status(401).json({ message: "Email ou senha inválidos." });
@@ -48,9 +49,9 @@ export const loginUser = async (req, res) => {
 
 
 export const registerUser = (req, res) => {
-  const { nome, email, senha, fone, data_nascimento } = req.body;
+  const { nome, email, senha, fone, data_nascimento, isAdmin } = req.body;
 
-  if (!nome || !email || !senha || !fone || !data_nascimento) {
+  if (!nome || !email || !senha || !fone || !data_nascimento || isAdmin === undefined) {
       return res.status(400).json({ message: "Todos os campos são obrigatórios." });
   }
 
@@ -60,8 +61,8 @@ export const registerUser = (req, res) => {
       return res.status(500).json({ message: "Erro ao registrar o usuário." });
     }
 
-    const query = "INSERT INTO usuários (nome, email, senhaHash, fone, data_nascimento) VALUES (?, ?, ?, ?, ?)";
-    db.query(query, [nome, email, senhaHash, fone, data_nascimento], (err, result) => {
+    const query = "INSERT INTO usuários (nome, email, senhaHash, fone, data_nascimento, isAdmin) VALUES (?, ?, ?, ?, ?, ?)";
+    db.query(query, [nome, email, senhaHash, fone, data_nascimento, isAdmin], (err, result) => {
         if (err) {
             console.error("Erro ao inserir usuário:", err);
             return res.status(500).json({ message: "Erro ao registrar o usuário." });

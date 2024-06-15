@@ -3,7 +3,6 @@ import { addUser, deleteUser, getUsers, updateUser, registerUser, loginUser } fr
 import sendMessage from "../utils/sendMessage.js";
 import authMiddleware from '../middleware/authMiddleware.js';
 
-
 const router = express.Router();
 
 router.get("/", getUsers);
@@ -13,6 +12,9 @@ router.delete("/:id", deleteUser);
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-router.post("/send-message", sendMessage); 
+router.post("/send-message", authMiddleware, sendMessage); 
+router.get("/chat", authMiddleware, (req, res) => {
+  res.status(200).json({ message: 'Bem-vindo ao chat!', userId: req.userId });
+});
 
 export default router;

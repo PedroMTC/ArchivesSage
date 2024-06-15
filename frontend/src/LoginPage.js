@@ -3,7 +3,6 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
-
 function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -17,13 +16,21 @@ function LoginPage() {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:8800/login", {
+      const response = await axios.post("http://localhost:8800/login", {
         email,
         senha,
       });
-    
+
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('isAdmin', user.isAdmin); 
       toast.success("Login bem-sucedido!");
-      navigate("/chat"); 
+      
+      if (user.isAdmin) {
+        navigate("/CRUD");
+      } else {
+        navigate("/chat");
+      }
 
     } catch (error) {
       console.log(error);
