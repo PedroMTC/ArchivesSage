@@ -1,5 +1,3 @@
-// index.js
-
 import express from 'express';
 import userRoutes from './routes/users.js';
 import cors from 'cors';
@@ -21,4 +19,3 @@ app.use('/', userRoutes);
 app.listen(8800, () => {
   console.log('Server listening at http://localhost:8800');
 });
-

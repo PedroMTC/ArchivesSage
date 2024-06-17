@@ -15,20 +15,10 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Verificar se o usuário está autenticado e definir req.userId
+    req.userId = decoded.userId;
 
-    db.query('SELECT * FROM usuarios WHERE id = ? AND isAdmin = true', [decoded.userId], (err, results) => {
-      if (err) {
-        console.error('Erro ao consultar usuário:', err);
-        return res.status(500).json({ message: 'Erro ao consultar o usuário.' });
-      }
-
-      if (results.length === 0) {
-        return res.status(403).json({ message: 'Acesso não autorizado.' });
-      }
-
-      req.userId = decoded.userId;
-      next();
-    });
+    next(); // Chamar o próximo middleware
   } catch (error) {
     return res.status(401).json({ message: 'Token inválido ou expirado' });
   }
